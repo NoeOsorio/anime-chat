@@ -1,10 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native';
+import ChatScreen from './src/features/chat/screens/ChatScreen';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-    </View>
+    <ChatScreen />
   );
 }
 
