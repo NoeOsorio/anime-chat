@@ -4,12 +4,13 @@ import { Chat, MessageType, User } from "@flyerhq/react-native-chat-ui";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
+import { sendChat } from "../services/chat";
 
 const ChatScreen = () => {
   const [messages, setMessages] = useState<MessageType.Any[]>([]);
   const user: User = useMemo(
     () => ({
-      id: uuidv4(),
+      id: 'f9f472ca-01c4-4abf-a50f-80d90f716611',
       firstName: "Noe",
     }),
     []
@@ -24,12 +25,11 @@ const ChatScreen = () => {
     }),
     []
   );
-
   const addMessage = (message: MessageType.Any) => {
     setMessages((previousMessages) => [message, ...previousMessages]);
   };
 
-  const handleSendPress = (message: MessageType.PartialText) => {
+  const handleSendPress = async (message: MessageType.PartialText) => {
     const textMessage: MessageType.Text = {
       author: user,
       createdAt: Date.now(),
@@ -37,17 +37,18 @@ const ChatScreen = () => {
       text: message.text,
       type: "text",
     };
+    addMessage(textMessage);
+
+    const responseText = await sendChat(textMessage.text)
     const response: MessageType.Text = {
       author: friend,
       createdAt: Date.now(),
       id: uuidv4(),
-      text: message.text,
+      text: responseText,
       type: "text",
     };
-    addMessage(textMessage);
     addMessage(response);
   };
-  console.log(messages);
   return (
     // Remove this provider if already registered elsewhere
     // or you have React Navigation set up
