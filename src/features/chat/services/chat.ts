@@ -1,53 +1,33 @@
 import axios from "axios";
-import { Configuration, OpenAIApi } from "openai";
 
 const { OPENAI_API_KEY } = process.env;
 
-const configuration = new Configuration({
-  organization: "org-MMXK5fRsSMOKr4Dymk1RyRBY",
-  apiKey: OPENAI_API_KEY,
-});
-
 export async function sendChat(message: string) {
   try {
-    const openai = new OpenAIApi(configuration);
-
-    const response = await openai.createCompletion({
-      model: "text-davinci-003",
-      prompt: message,
-      temperature: 1,
-      max_tokens: 25,
-      top_p: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-    });
-
-    // const response = await axios.post(
-    //   "https://api.openai.com/v1/engines/gpt-3.5-turbo/completions",
-    //   {
-    //     messages: [
-    //       { role: "system", content: "You are a helpful assistant." },
-    //       { role: "user", content: "Hello world" },
-    //     ],
-    //   },
-    //   {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: `Bearer ${OPENAI_API_KEY}`,
-    //     },
-    //   }
-    // );
-    //   const completion = await openai.createChatCompletion({
-    //     model: "gpt-3.5-turbo",
-    //   messages: [
-    //     { role: "system", content: "You are a helpful assistant." },
-    //     { role: "user", content: "Hello world" },
-    //   ],
-    //   });
-    console.log(response.data);
-    return response.data.choices[0].text.trimStart();
+    const response = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        max_tokens: 100,
+        messages: [
+          {
+            role: "system",
+            content: `Actua como un amigo o amiga que esta platicando por chat, trata de usar maximo 400 caracteres por mensaje. Puedes usar emojis o cualquier otro medio para sonar lo mas real posible. Recuerda reflejar la emocion correcta al hablar y tenerlo
+            en cuenta en tus respuestas. No seas cortante con la conversacion, trata de mantenerla viva. A menos que el usuario de a entender que se acabo el tema o la conversacion.`,
+          },
+          { role: "user", content: message },
+        ],
+        model: "gpt-3.5-turbo",
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data.choices[0].message.content.trimStart();
   } catch (error) {
     console.log(error);
-    return 'Lo siento, tengo que irme. Un gusto saludarte.'
+    return "Lo siento, tengo que irme. Un gusto saludarte.";
   }
 }
